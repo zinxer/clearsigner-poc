@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "lib": ["ES2022"],
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "removeComments": false,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@/types/*": ["src/types/*"],
+      "@/services/*": ["src/services/*"],
+      "@/validation/*": ["src/validation/*"],
+      "@/middleware/*": ["src/middleware/*"],
+      "@/routes/*": ["src/routes/*"],
+      "@/controllers/*": ["src/controllers/*"],
+      "@/prisma/*": ["src/prisma/*"]
+    },
+    "types": ["node"]
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts"
+  ]
+} 

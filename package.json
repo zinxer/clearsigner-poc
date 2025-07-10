@@ -1,0 +1,59 @@
+{
+  "name": "tx-clearsigner",
+  "version": "1.0.0",
+  "description": "Backend service for tx-clearsigner transaction analysis",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:init": "tsx src/scripts/initializeDatabase.ts",
+    "script:etherscan-source": "tsx src/scripts/etherscanSourceCode.ts",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix"
+  },
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "transaction-analysis",
+    "express",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "^5.6.0",
+    "alchemy-sdk": "^3.1.2",
+    "axios": "^1.6.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.8.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^20.19.6",
+    "eslint": "^9.0.0",
+    "prisma": "^5.6.0",
+    "tsx": "^4.6.0",
+    "typescript": "^5.2.2",
+    "typescript-eslint": "^7.0.0",
+    "vitest": "^0.34.6"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,188 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enhanced models for multi-chain address tracking
+model Chain {
+  id        String   @id @default(cuid())
+  chainId   Int      @unique
+  name      String   @unique
+  symbol    String   // ETH, MATIC, etc.
+  rpcUrl    String?
+  blockExplorerUrl String?
+  isTestnet Boolean  @default(false)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  addresses Address[]
+  
+  @@map("chains")
+}
+
+model Address {
+  id        String   @id @default(cuid())
+  address   String   // The actual address (0x...)
+  chainId   Int
+  chain     Chain    @relation(fields: [chainId], references: [chainId])
+  
+  // Basic identification
+  contractName String?  // Official/provided name of the contract
+  displayName  String?  // User-friendly display name
+  symbol       String?  // For tokens
+  decimals     Int?     // For tokens
+  
+  // Core characteristics
+  isContract     Boolean @default(false)
+  isToken        Boolean @default(false)
+  isProxy        Boolean @default(false)
+  isVerified     Boolean @default(false)
+  
+  // Contract-specific data
+  currentImplementation String? // Current implementation for proxies
+  proxyType            String? // transparent, uups, beacon, custom, router
+  abi                  Json?
+  bytecode             String?
+  bytecodeHash         String?
+  
+  // Token-specific data
+  tokenStandard        String? // ERC20, ERC721, ERC1155, etc.
+  totalSupply          String? // BigInt as string
+  maxSupply            String?
+  tokenImageUrl        String? // URL to token logo/icon
+  
+  // Risk assessment
+  riskLevel     Int?     // 1-10 scale
+  
+  // Timestamps
+  firstSeenAt   DateTime? // When first detected on chain
+  lastSeenAt    DateTime? // Last activity
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  attributes      AddressAttribute[]
+  tags            AddressTag[]
+  sourceCode      SourceCode[]
+  proxyHistory    ProxyHistory[]
+  
+  @@unique([address, chainId])
+  @@index([address])
+  @@index([chainId])
+  @@index([isContract])
+  @@index([isToken])
+  @@index([isVerified])
+  @@index([contractName])
+  @@map("addresses")
+}
+
+// Flexible key-value attributes system instead of many boolean columns
+model AddressAttribute {
+  id        String   @id @default(cuid())
+  addressId String
+  address   Address  @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  
+  key       String   // e.g., "isUpgradeable", "hasTimelock", "auditFirm"
+  value     String   // "true", "false", "OpenZeppelin", etc.
+  category  String?  // "security", "defi", "token", "governance"
+  
+  // Metadata about the attribute
+  source     String?  // "analysis", "manual", "etherscan"
+  addedAt    DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  @@unique([addressId, key])
+  @@index([addressId])
+  @@index([key])
+  @@index([category])
+  @@map("address_attributes")
+}
+
+// Track historical proxy implementation changes
+model ProxyHistory {
+  id              String   @id @default(cuid())
+  addressId       String   // The proxy contract
+  address         Address  @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  
+  implementation  String   // Implementation address at this point
+  blockNumber     BigInt?  // Block when change occurred
+  transactionHash String?  // Transaction that made the change
+  timestamp       DateTime // When the change happened
+  
+  // For router patterns (proxy -> proxy -> implementation)
+  isDirectImplementation Boolean @default(true) // false if this points to another proxy
+  depth                  Int     @default(0)    // 0 = direct, 1 = proxy->proxy, etc.
+  
+  // Change tracking
+  changeType      String?  // "deployed", "upgraded", "deprecated"
+  previousImpl    String?  // Previous implementation (for upgrades)
+  
+  // Metadata
+  source          String?  // "etherscan", "analysis", "manual"
+  createdAt       DateTime @default(now())
+  
+  @@index([addressId])
+  @@index([implementation])
+  @@index([timestamp])
+  @@index([blockNumber])
+  @@map("proxy_history")
+}
+
+// Simple tagging system
+model AddressTag {
+  id        String   @id @default(cuid())
+  addressId String
+  address   Address  @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  
+  tag       String   // "audited", "uniswap", "high-risk", "erc20", etc.
+  category  String?  // "security", "protocol", "token", etc.
+  source    String?  // "analysis", "manual", "etherscan"
+  addedAt   DateTime @default(now())
+  
+  @@unique([addressId, tag])
+  @@index([addressId])
+  @@index([tag])
+  @@index([category])
+  @@map("address_tags")
+}
+
+model SourceCode {
+  id        String   @id @default(cuid())
+  addressId String
+  address   Address  @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  
+  // Source code information
+  language        String   // Solidity, Vyper, etc.
+  sourceCode      String   // Full source code
+  fileName        String?  // Main contract file name
+  
+  // Verification details
+  isVerified      Boolean  @default(false)
+  verifiedOn      String?  // etherscan, sourcify, etc.
+  verificationDate DateTime?
+  
+  // Compiler details
+  compilerVersion String?
+  optimization    Boolean? @default(false)
+  
+  // Metadata
+  contractName    String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([addressId])
+  @@index([isVerified])
+  @@map("source_code")
+}
+
+
+
