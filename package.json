@@ -1,7 +1,7 @@
 {
   "name": "tx-clearsigner",
   "version": "1.0.0",
-  "description": "Backend service for tx-clearsigner transaction analysis",
+  "description": "Backend service for tx-clearsigner transaction clear signing",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -25,7 +25,7 @@
     "express",
     "typescript"
   ],
-  "author": "",
+  "author": "zinxer",
   "license": "MIT",
   "dependencies": {
     "@prisma/client": "^5.6.0",
