@@ -84,6 +84,7 @@ Rate limits: general 100 req/min, read-only 200 req/min, health 10 req/10 s (tun
 ## Known issues
 
 - No test suite is included beyond the vitest setup.
+- `npx tsc --noEmit` reports pre-existing type errors (e.g. `alchemyService.getContractMetadata` missing on the SDK core namespace, nullable JSON inputs in `contractService`); the `dev` script runs via tsx.
 - `prisma/migrations/` is git-ignored; use `db:push` for development.
 
 ## Context
