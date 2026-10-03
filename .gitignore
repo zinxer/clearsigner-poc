@@ -121,3 +121,17 @@ temp/
 # Prisma
 # Keep schema.prisma but ignore generated files
 prisma/migrations/
+
+# Secret guard
+bin/test.js
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.keystore
+keystore/
+*.dump
+*.bak
+secrets/
