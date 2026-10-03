@@ -50,7 +50,6 @@ async function main() {
     log('I', `Database statistics:`);
     log('I', `  - Chains: ${stats.chains}`);
     log('I', `  - Addresses: ${stats.addresses}`);
-    log('I', `  - Transaction Analyses: ${stats.transactionAnalyses}`);
     
   } catch (error) {
     log('E', `Database initialization failed: ${(error as Error).message}`);
@@ -89,18 +88,15 @@ async function createSystemTags() {
 async function getStats() {
   const [
     chainCount,
-    addressCount,
-    transactionAnalysisCount
+    addressCount
   ] = await Promise.all([
     prisma.chain.count(),
-    prisma.address.count(),
-    prisma.transactionAnalysis.count()
+    prisma.address.count()
   ]);
 
   return {
     chains: chainCount,
-    addresses: addressCount,
-    transactionAnalyses: transactionAnalysisCount
+    addresses: addressCount
   };
 }
 
